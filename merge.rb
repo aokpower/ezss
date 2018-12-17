@@ -6,6 +6,7 @@ class Spreadsheet
       new(CSV.read(file), name: file, matcher_i: matcher_i)
     end
 
+    # NOTE: doesn't work with > 2 spreadsheets?
     def combine(spreadsheets)
       matchers = spreadsheets.map(&:match_data).flatten.uniq
 
@@ -29,7 +30,7 @@ class Spreadsheet
   attr_reader :name, :headers, :rows, :matcher_i
 
   def initialize(rows, name: nil, matcher_i: nil)
-    rows       = rows.clone # don't modify original rows arr, work from a new 1
+    rows       = rows.clone # don't mutate original rows
     @name      = name
     @headers   = rows.shift
     @rows      = rows
@@ -61,6 +62,20 @@ class Spreadsheet
     end
   end
 
-  # Write out to csv file
-  # def write(filename)
+  def write(filename)
+    CSV.open(filename, 'w', force_quotes: true) do |csvf|
+      csvf << headers
+      rows.each { |row| csvf << row }
+    end
+  end
+end
+
+if __FILE__ == $0
+  spreadsheets = ARGV.map(&Spreadsheet.method(:from_file))
+  spreadsheets.map(&:pick_matcher_from_prompt)
+  combined = Spreadsheet.combine(spreadsheets)
+
+  print('Name of output file?: ')
+  outfile = STDIN.gets.chomp
+  combined.write(outfile)
 end
