@@ -7,40 +7,25 @@ class Spreadsheet
     end
 
     def combine(spreadsheets)
-      header = spreadsheets.flat_map(&:headers)
-
       # Get a unique list of matchers i.e. target cells to match with other rows
       matchers = spreadsheets.reduce([]) do |m, s|
         m.append(s.rows.map { |row| row[s.matcher_i] }).flatten
       end.uniq
 
-      # search through spreadsheet for all rows with matching cells,
-      # combine with either matching rows or Spreadsheet offsets.
-      # NOTE: Hash.new {[]} b/c > x = Hash.new([]); x[:a] = x[:a] << []; x[:b] = x[:b] << []; x
-      combined = Hash.new { [] }
+      # NOTE: Hash.new {[]} b/c:
+      # > x = Hash.new([]); x[:a] = x[:a] << []; x[:b] = x[:b] << []; x
+      matches = Hash.new { [] }
       matchers.each do |m|
         spreadsheets.each do |ss|
-          combined[m] = combined[m] << ss.rows.select { |r| r[ss.matcher_i] == m }
-          # spreadsheets that have no matching rows will just be empty arrs
+          r = ss.rows.select { |r| r[ss.matcher_i] == m }
+          matches[m] = matches[m] << (r.empty? ? [ss.offset] : r)
         end
       end
 
-      { header: header,
-        matches: combined,
-        offsets: spreadsheets.map(&:offset) }
-    end
-
-    def from_combined(header:, matches:, offsets:, name: 'combined.csv')
-      # return rows suitable for Spreadsheet or CSV input
-      rows = matches.map do |(_, vs)|
-        n_of_rows = vs.map(&:length).max
-        r = vs.map.with_index do |ss_res, ind|
-          ss_res.empty? ? [offsets[ind]] * n_of_rows : ss_res
-        end
-        r.shift.zip(*r)
-      end
-
-      new([header, *rows.flatten(1).map(&:flatten)], name: name)
+      rows = matches.values
+                    .flat_map { |ms| ms.shift.product(*ms) }
+                    .map(&:flatten)
+      new([spreadsheets.flat_map(&:headers), *rows], name: name)
     end
   end
 
@@ -55,7 +40,6 @@ class Spreadsheet
   end
 
   def offset
-    # TODO: should offset be -1 from length?
     Array.new(headers.length, '')
   end
 
