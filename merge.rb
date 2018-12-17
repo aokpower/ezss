@@ -7,10 +7,7 @@ class Spreadsheet
     end
 
     def combine(spreadsheets)
-      # Get a unique list of matchers i.e. target cells to match with other rows
-      matchers = spreadsheets.reduce([]) do |m, s|
-        m.append(s.rows.map { |row| row[s.matcher_i] }).flatten
-      end.uniq
+      matchers = spreadsheets.map(&:match_data).flatten.uniq
 
       # NOTE: Hash.new {[]} b/c:
       # > x = Hash.new([]); x[:a] = x[:a] << []; x[:b] = x[:b] << []; x
@@ -45,6 +42,10 @@ class Spreadsheet
 
   def matcher
     (m = @matcher_i).nil? ? nil : headers[m]
+  end
+
+  def match_data
+    rows.map { |row| row[matcher_i] }
   end
 
   def pick_matcher(ind = nil)
