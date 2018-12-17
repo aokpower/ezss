@@ -59,7 +59,7 @@ class Spreadsheet
   end
 
   def offset
-    # TODO: test if should be -1
+    # TODO: should offset be -1 from length?
     Array.new(headers.length, '')
   end
 
@@ -83,16 +83,3 @@ class Spreadsheet
   # Write out to csv file
   # def write(filename)
 end
-
-spreadsheets = ARGV.map(&Spreadsheet.method(:from_file))
-
-combined = Spreadsheet.combine(spreadsheets)
-combined.rows.each do |r|
-  p r
-end # debug
-
-# TODO: write combined output to file
-# TODO: Separate stdin getting from pick_matcher
-#       possibly by making pick_matcher yield spreadsheet?
-
-# combined.write(output)
