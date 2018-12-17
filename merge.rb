@@ -6,7 +6,7 @@ class Spreadsheet
       new(CSV.read(file), name: file, matcher_i: matcher_i)
     end
 
-    def combine(spreadsheets, name: 'combined.csv')
+    def combine(spreadsheets)
       header = spreadsheets.flat_map(&:headers)
 
       # Get a unique list of matchers i.e. target cells to match with other rows
@@ -25,17 +25,12 @@ class Spreadsheet
         end
       end
 
-      rows = combined_to_rows(
-        header: header,
+      { header: header,
         matches: combined,
-        offsets: spreadsheets.map(&:offset))
-
-      new(rows, name: name)
+        offsets: spreadsheets.map(&:offset) }
     end
 
-    private
-
-    def combined_to_rows(header:, matches:, offsets:)
+    def from_combined(header:, matches:, offsets:, name: 'combined.csv')
       # return rows suitable for Spreadsheet or CSV input
       rows = matches.map do |(_, vs)|
         n_of_rows = vs.map(&:length).max
@@ -45,7 +40,7 @@ class Spreadsheet
         r.shift.zip(*r)
       end
 
-      [header, *rows.flatten(1).map(&:flatten)]
+      new([header, *rows.flatten(1).map(&:flatten)], name: name)
     end
   end
 
