@@ -18,6 +18,8 @@ class MergeTest < Minitest::Test
 
     @spreadsheet_a = Spreadsheet.new(@a_raw, matcher_i: 0)
     @spreadsheet_b = Spreadsheet.new(@b_raw, matcher_i: 3)
+    @combined      = Spreadsheet.combine([@spreadsheet_a, @spreadsheet_b])
+    @combined_ss = Spreadsheet.from_combined(@combined)
   end
 
   def test_pick_matcher_w_int
@@ -33,5 +35,13 @@ class MergeTest < Minitest::Test
   def test_new_matcher
     assert_equal 'Foo', @spreadsheet_a.matcher
     assert_equal 'Foo', @spreadsheet_b.matcher
+  end
+
+  def test_from_combined_has_all_values
+    all_values   = [@a_raw, @b_raw].flatten.uniq
+    all_combined = [@combined_ss.rows, @combined_ss.headers].flatten.uniq
+    diff         = all_values - all_combined
+
+    assert diff.empty?
   end
 end
