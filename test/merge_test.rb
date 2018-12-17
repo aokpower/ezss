@@ -19,6 +19,12 @@ class MergeTest < Minitest::Test
     @spreadsheet_b = Spreadsheet.new(@b_raw, matcher_i: 3)
   end
 
+  def test_pick_matcher_w_int
+    a = Spreadsheet.new(@a_raw)
+    a.pick_matcher(0)
+    assert_equal 'Foo', a.matcher
+  end
+
   def test_new_headers
     assert_equal %w[Foo bar baz], @spreadsheet_a.headers
   end
