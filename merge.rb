@@ -52,6 +52,7 @@ class Spreadsheet
   attr_reader :name, :headers, :rows, :matcher_i
 
   def initialize(rows, name: nil, matcher_i: nil)
+    rows       = rows.clone # don't modify original rows arr, work from a new 1
     @name      = name
     @headers   = rows.shift
     @rows      = rows
