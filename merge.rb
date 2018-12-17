@@ -49,13 +49,13 @@ class Spreadsheet
     end
   end
 
-  attr_reader :name, :headers, :rows, :matcher_i, :matcher
+  attr_reader :name, :headers, :rows, :matcher_i
 
-  def initialize(rows, name: nil, matcher: nil)
-    @name    = name
-    @headers = rows.shift
-    @rows    = rows
-    @matcher = matcher
+  def initialize(rows, name: nil, matcher_i: nil)
+    @name      = name
+    @headers   = rows.shift
+    @rows      = rows
+    @matcher_i = matcher_i
   end
 
   def offset
@@ -63,17 +63,21 @@ class Spreadsheet
     Array.new(headers.length, '')
   end
 
-  def pick_matcher
-    puts "Which header do you want to match#{" for #{name}" if name}?"
+  def matcher
+    (m = @matcher_i).nil? ? nil : headers[m]
+  end
 
-    headers.each_with_index do |e, i|
-      puts "#{i}) #{e}"
+  def pick_matcher(ind = nil)
+    @matcher_i = ind || yield(headers)
+  end
+
+  def pick_matcher_from_prompt
+    pick_matcher do |headers|
+      puts "Which header do you want to match#{" for #{name}" if name}?"
+      headers.each_with_index { |h, i| puts "#{i}) #{h}" }
+
+      print('Your choice?: '); Integer(STDIN.gets.chomp)
     end
-
-    print('Your choice?: ')
-    @matcher_i = Integer(STDIN.gets.chomp)
-    @matcher   = headers[@matcher_i]
-    puts("You selected #{@matcher}")
   end
 
   # Write out to csv file
@@ -81,7 +85,6 @@ class Spreadsheet
 end
 
 spreadsheets = ARGV.map(&Spreadsheet.method(:from_file))
-spreadsheets.each(&:pick_matcher)
 
 combined = Spreadsheet.combine(spreadsheets)
 combined.rows.each do |r|
