@@ -45,7 +45,14 @@ class MergeTest < Minitest::Test
   end
 
   def test_combined_has_right_n_of_matches_and_headers
-    assert_equal 5, @combined.rows.length
-    assert_equal 7, @combined.headers.length
+    exp_rows = [@spreadsheet_a, @spreadsheet_b].map(&:match_data)
+      .map { |d| d.reduce(Hash.new(0)) { |f, e| f[e] += 1; f } }
+      .reduce do |a, b|
+        a.merge(b) { |_, va, vb| [va, vb].max }.values.reduce(&:+)
+      end
+    assert_equal exp_rows, @combined.rows.length
+
+    exp_headers = @a_raw[0].length + @b_raw[0].length
+    assert_equal exp_headers, @combined.headers.length
   end
 end
