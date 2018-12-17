@@ -2,8 +2,8 @@ require 'csv'
 
 class Spreadsheet
   class << self
-    def from_file(file)
-      new(CSV.read(file), name: file)
+    def from_file(file, matcher_i: nil)
+      new(CSV.read(file), name: file, matcher_i: matcher_i)
     end
 
     def combine(spreadsheets, name: 'combined.csv')
