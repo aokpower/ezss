@@ -46,7 +46,7 @@ class Spreadsheet
   end
 
   def matcher
-    (m = @matcher_i).nil? ? nil : headers[m]
+    @matcher_i && headers[@matcher_i]
   end
 
   def matcher_search(m, empty_offset: false)
