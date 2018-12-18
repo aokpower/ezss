@@ -87,7 +87,7 @@ class Spreadsheet
   end
 end
 
-if __FILE__ == $0
+if $PROGRAM_NAME == __FILE__
   spreadsheets = ARGV.map(&Spreadsheet.method(:from_file))
   spreadsheets.map(&:pick_matcher_from_prompt)
   combined = Spreadsheet.combine(spreadsheets)
