@@ -10,20 +10,24 @@ class Spreadsheet
     def combine(spreadsheets)
       matchers = spreadsheets.map(&:match_data).flatten.uniq
 
-      # NOTE: Hash.new {[]} b/c:
-      # > x = Hash.new([]); x[:a] = x[:a] << []; x[:b] = x[:b] << []; x
-      matches = Hash.new { [] }
-      matchers.each do |m|
-        spreadsheets.each do |ss|
-          r = ss.rows.select { |r| r[ss.matcher_i] == m }
-          matches[m] = matches[m] << (r.empty? ? [ss.offset] : r)
+      matches = merge_search_results(
+        spreadsheets.map do |ss|
+          ss.search_matchers(matchers, empty_offset: true) 
         end
-      end
+      )
 
       rows = matches.values
                     .flat_map { |ms| ms.shift.product(*ms) }
                     .map(&:flatten)
       new([spreadsheets.flat_map(&:headers), *rows], name: name)
+    end
+
+    private
+    
+    def merge_search_results(hs)
+      hs.reduce do |ha, hb|
+        ha.merge(hb) { |_, va, vb| [va] << vb }
+      end
     end
   end
 
@@ -43,6 +47,19 @@ class Spreadsheet
 
   def matcher
     (m = @matcher_i).nil? ? nil : headers[m]
+  end
+
+  def matcher_search(m, empty_offset: false)
+    r = rows.select { |r| r[matcher_i] == m }
+    if empty_offset
+      r.empty? ? [offset] : r
+    else
+      r
+    end
+  end
+
+  def search_matchers(ms, empty_offset: false)
+    ms.map { |m| [m, matcher_search(m, empty_offset: empty_offset)] }.to_h
   end
 
   def match_data
