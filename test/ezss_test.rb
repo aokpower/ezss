@@ -57,4 +57,22 @@ class MergeTest < Minitest::Test
     exp_headers = @a_raw[0].length + @b_raw[0].length
     assert_equal exp_headers, @combined.headers.length
   end
+
+  def test_change_duplicates
+    ss = Spreadsheet.new(
+      [%w[foo bar baz],
+       %w[1   2   3],
+       %w[4   5   6],
+       %w[1   2   3]],
+      matcher_i: 0)
+    ss_clone = ss.clone
+
+    ss.map_duplicates! { |row| row[0] = 'changed' }
+
+    # First two rows should be the same
+    assert_equal ss_clone.rows[0], ss.rows[0]
+    assert_equal ss_clone.rows[1], ss.rows[1]
+    # last one shouldn't
+    assert_equal 'changed', ss.rows[2][0]
+  end
 end

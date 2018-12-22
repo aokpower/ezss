@@ -79,6 +79,17 @@ class Spreadsheet
     end
   end
 
+  def map_duplicates!
+    exists     = {}
+    rows.each do |row|
+      if exists[(m = row[@matcher_i])]
+        row = yield row
+      else
+        exists[m] = true
+      end
+    end
+  end
+
   def write(filename)
     CSV.open(filename, 'w', force_quotes: true) do |csvf|
       csvf << headers
