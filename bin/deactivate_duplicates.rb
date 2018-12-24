@@ -4,6 +4,7 @@ spreadsheet = Spreadsheet.from_file ARGV[0]
 
 duplicates = 0 # STATS
 spreadsheet.pick_matcher(0) # 0 = Master Sku index
+
 spreadsheet.map_duplicates! do |row|
   row[3] = 'FALSE'
   duplicates += 1
