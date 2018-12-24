@@ -4,17 +4,17 @@ require_relative '../lib/ezss'
 
 class MergeTest < Minitest::Test
   def setup
-    @a_raw = [%w[Foo bar baz],
-              %w[1   2   3],
-              %w[2   4   6],
-              %w[3   8   12],
-              %w[4   16  24]]
+    @a_raw = [%w[Foo  bar  baz],
+              %w[  1    2    3],
+              %w[  2    4    6],
+              %w[  3    8   12],
+              %w[  4   16   24]]
 
     @b_raw = [%w[bish bash bosh Foo],
-              %w[a    b    c    1],
-              %w[b    d    f    2],
-              %w[g    h    i    4],
-              %w[j    k    l    4]]
+              %w[   a    b    c   1],
+              %w[   b    d    f   2],
+              %w[   g    h    i   4],
+              %w[   j    k    l   4]]
 
     @spreadsheet_a = Spreadsheet.new(@a_raw, matcher_i: 0)
     @spreadsheet_b = Spreadsheet.new(@b_raw, matcher_i: 3)
