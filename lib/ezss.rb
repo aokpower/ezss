@@ -41,6 +41,10 @@ class Spreadsheet
     @matcher_i = matcher_i
   end
 
+  def map_with_matcher!
+    @rows.map! { |r| yield r, r[@matcher_i] }
+  end
+
   def offset
     Array.new(headers.length, '')
   end

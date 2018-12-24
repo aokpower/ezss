@@ -75,4 +75,12 @@ class MergeTest < Minitest::Test
     # last one shouldn't
     assert_equal 'changed', ss.rows[2][0]
   end
+
+  def test_map_with_matcher
+    @spreadsheet_a.map_with_matcher! do |row, matcher|
+      row.tap { |r| r[0] = (r[0].to_i * 2) if matcher.to_i.odd? }
+    end
+
+    assert @spreadsheet_a.rows.map(&:first).map(&:to_i).all?(&:even?)
+  end
 end
