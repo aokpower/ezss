@@ -67,7 +67,11 @@ class MergeTest < Minitest::Test
       matcher_i: 0)
     ss_clone = ss.clone
 
-    ss.map_duplicates! { |row| row[0] = 'changed' }
+    exists = {}
+    ss.map! do |row, ss|
+      m = row[ss.matcher_i]
+      row.tap { |r| exists[m] ? row[0] = 'changed' : exists[m] = true }
+    end
 
     # First two rows should be the same
     assert_equal ss_clone.rows[0], ss.rows[0]
@@ -77,8 +81,9 @@ class MergeTest < Minitest::Test
   end
 
   def test_map_with_matcher
-    @spreadsheet_a.map_with_matcher! do |row, matcher|
-      row.tap { |r| r[0] = (r[0].to_i * 2) if matcher.to_i.odd? }
+    @spreadsheet_a.map! do |row, ss|
+      m = row[ss.matcher_i]
+      row.tap { |r| r[0] = (r[0].to_i * 2) if m.to_i.odd? }
     end
 
     assert @spreadsheet_a.rows.map(&:first).map(&:to_i).all?(&:even?)

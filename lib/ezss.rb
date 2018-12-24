@@ -41,10 +41,6 @@ class Spreadsheet
     @matcher_i = matcher_i
   end
 
-  def map_with_matcher!
-    @rows.map! { |r| yield r, r[@matcher_i] }
-  end
-
   def offset
     Array.new(headers.length, '')
   end
@@ -74,23 +70,16 @@ class Spreadsheet
     @matcher_i = ind || yield(headers)
   end
 
+  def map!
+    @rows = @rows.map { |row| yield row, self }
+  end
+
   def pick_matcher_from_prompt
     pick_matcher do |headers|
       puts "Which header do you want to match#{" for #{name}" if name}?"
       headers.each_with_index { |h, i| puts "#{i}) #{h}" }
 
       print('Your choice?: '); Integer(STDIN.gets.chomp)
-    end
-  end
-
-  def map_duplicates!
-    exists     = {}
-    rows.each do |row|
-      if exists[(m = row[@matcher_i])]
-        row = yield row
-      else
-        exists[m] = true
-      end
     end
   end
 

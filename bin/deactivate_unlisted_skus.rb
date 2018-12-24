@@ -10,7 +10,8 @@ end
 
 puts '# of active products before: ' + count_active(master_products).to_s
 
-master_products.map_with_matcher! do |row, matcher|
+master_products.map! do |row, ss|
+  matcher = row[ss.matcher_i]
   unless listed_skus.include? matcher
     row[20] = 'false'
   end
