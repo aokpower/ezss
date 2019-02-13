@@ -5,7 +5,10 @@ GEM
     ffi (1.10.0)
     filigree (0.4.1)
     method_source (0.9.2)
+    mini_portile2 (2.4.0)
     minitest (5.11.3)
+    nokogiri (1.10.1)
+      mini_portile2 (~> 2.4.0)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -13,6 +16,10 @@ GEM
     rltk (3.0.1)
       ffi (>= 1.0.0)
       filigree (>= 0.2.0)
+    rubyXL (3.3.33)
+      nokogiri (>= 1.4.4)
+      rubyzip (>= 1.1.6)
+    rubyzip (1.2.2)
 
 PLATFORMS
   ruby
@@ -22,6 +29,7 @@ DEPENDENCIES
   pry
   rb-readline
   rltk
+  rubyXL
 
 BUNDLED WITH
    1.17.3
