@@ -1,0 +1,6 @@
+* Gem executable
+** DONE fit tmp/do.rb into ezss/bin
+** DONE make into gem with executable field
+** DONE install gem
+** DONE rename do?
+** TODO require lib stuff into do
