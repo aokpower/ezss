@@ -40,18 +40,19 @@ end
 
 CSV::Table.include ECSV
 
-args = ARGV.map do |arg|
-  {
-    name: arg,
-    data: case File.extname(arg)
-          when '.csv'
-            CSV.read(arg, headers: true) # returns CSV::Table
-          when '.txt'
-            # :chomp to remove line ending characters (\n & CRLF etc)
-            File.readlines(arg).map(&:chomp)
-          end
-  }
+unless ARGV.all?(&File.method(:exist?))
+  raise 'Some arguments were not valid file paths'
 end
 
-p args.map { |a| a[:name] }
+ARGV.each do |arg|
+  puts "Input ivar name for #{arg} : "
+  instance_variable_set "@#{STDIN.gets.chomp}",
+                        case File.extname(arg)
+                        when '.csv'
+                          CSV.read(arg, headers: true) # returns CSV::Table
+                        when '.txt'
+                          File.readlines(arg).map(&:chomp)
+                        end
+end
+
 binding.pry
