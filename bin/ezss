@@ -9,7 +9,7 @@ class Array
   # [1, 1, 2].tally(&:even?) #=> { false => 2, true => 1 }
   def tally(&func)
     func ||= ->(x) { x } # func is id by default
-    each_with_onbject(Hash.new(0)) { |v, t| t[func.call(v)] += 1 }
+    each_with_object(Hash.new(0)) { |v, t| t[func.call(v)] += 1 }
   end
 end
 
