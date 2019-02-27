@@ -55,4 +55,6 @@ ARGV.each do |arg|
                         end
 end
 
+# rubocop:disable Lint/Debugger
 binding.pry
+# rubocop:enable Lint/Debugger
