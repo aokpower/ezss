@@ -24,7 +24,8 @@ end
 module ECSV
   # TODO: err if func.call(row) returns non-string
   def whitelist!(list, &func)
-    func ||= ->(x) { x } # func is identity by default
+    # This is broken, identity won't work for a row with #include?
+    # func ||= ->(x) { x } # func is identity by default
     delete_if do |row|
       !list.include?(func.call(row))
     end
