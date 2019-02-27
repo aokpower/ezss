@@ -43,6 +43,16 @@ module ECSV
     raise 'No "Active" header' unless headers.include?('Active')
     select { |row| row['Active'] == 'TRUE' }
   end
+
+  # csv.where(othercsv, 'skus', 'product_skus') { |r1, r2| r1['cost'] = r2['cost'] }
+  def where(other_sheet, h1, h2)
+    each do |row|
+      match = other_sheet.find { |o_row| o_row[h2] == row[h1] }
+      if match
+        yield row, match
+      end
+    end
+  end
 end
 
 CSV::Table.include ECSV
