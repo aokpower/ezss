@@ -37,6 +37,12 @@ module ECSV
       to_a.each { |row| outf << row }
     end
   end
+
+  # TODO: this only works for skubana sheets, extract to skubana module?
+  def active
+    raise 'No "Active" header' unless headers.include?('Active')
+    select { |row| row['Active'] == 'TRUE' }
+  end
 end
 
 CSV::Table.include ECSV
