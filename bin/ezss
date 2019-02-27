@@ -32,7 +32,6 @@ module ECSV
   end
 
   def write!(filename)
-    # self. b/c Kernal#open is a thing. Want to be unamiguous.
     CSV.open(filename, 'w', force_quotes: true) do |outf|
       to_a.each { |row| outf << row }
     end
